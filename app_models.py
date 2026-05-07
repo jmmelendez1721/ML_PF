@@ -18,6 +18,7 @@ from sklearn.metrics import (
 )
 import lime
 import lime.lime_tabular
+import traceback
 
 # ══════════════════════════════════════════════
 # APP
@@ -48,13 +49,40 @@ CONT_COLS = [c for c in NUM_COLS if c not in CAT_COLS]
 # ══════════════════════════════════════════════
 # MODELOS
 # ══════════════════════════════════════════════
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
 MODEL_PATHS = {
-    "Naive Bayes":"https://github.com/jmmelendez1721/ML_PF/blob/master/bayesian/naive_bayes_gridsearch.pkl",
-    "Gradient Boosting": "https://github.com/jmmelendez1721/ML_PF/blob/master/Gradient_Boosting/gradient_boosting_gridsearch.pkl",
-    "KNN": "https://github.com/jmmelendez1721/ML_PF/blob/master/KNN/knn_cardio_pipeline.pkl",
-    "Logistic Regression": "https://github.com/jmmelendez1721/ML_PF/blob/master/Logistic_Regression/logistic_regression.pkl",
-    "SVM": "https://github.com/jmmelendez1721/ML_PF/blob/master/SVM/svm_gridsearch.pkl",
-    "Random Forest": "https://github.com/jmmelendez1721/ML_PF/blob/master/Random_Forest/random_forest_gridsearch.pkl",
+    "Naive Bayes": os.path.join(BASE_DIR, "bayesian", "naive_bayes_gridsearch.pkl"),
+
+    "Gradient Boosting": os.path.join(
+        BASE_DIR,
+        "Gradient_Boosting",
+        "gradient_boosting_gridsearch.pkl"
+    ),
+
+    "KNN": os.path.join(
+        BASE_DIR,
+        "KNN",
+        "knn_cardio_pipeline.pkl"
+    ),
+
+    "Logistic Regression": os.path.join(
+        BASE_DIR,
+        "Logistic_Regression",
+        "logistic_regression.pkl"
+    ),
+
+    "SVM": os.path.join(
+        BASE_DIR,
+        "SVM",
+        "svm_gridsearch.pkl"
+    ),
+
+    "Random Forest": os.path.join(
+        BASE_DIR,
+        "Random_Forest",
+        "random_forest_gridsearch.pkl"
+    ),
 }
 # Caché de feature importance por modelo (se calcula una vez y se reutiliza)
 FEAT_CACHE = {}
@@ -68,21 +96,42 @@ MODEL_COLORS = {
     "Random Forest":       "#1A3A5C",
 }
 
+
+
 def load_model(name):
+
     path = MODEL_PATHS[name]
+
+    print(f"\nLoading model: {name}")
+    print(f"Path: {path}")
+    print(f"Exists: {os.path.exists(path)}")
+
     if not os.path.exists(path):
+        print("Model file not found")
         return None
-    # joblib es más robusto que pickle para objetos de scikit-learn
-    # y resuelve el error STACK_GLOBAL requires str
+
     try:
-        return joblib.load(path)
+        model = joblib.load(path)
+        print("Loaded with joblib")
+        return model
+
     except Exception:
+        print("Joblib load failed:")
+        traceback.print_exc()
+
         try:
             with open(path, "rb") as f:
-                return pickle.load(f)
-        except Exception:
-            return None
+                model = pickle.load(f)
 
+            print("Loaded with pickle")
+            return model
+
+        except Exception:
+            print("Pickle load failed:")
+            traceback.print_exc()
+
+            return None
+            
 def get_proba(model, X):
     """Obtener probabilidades compatible con pipelines y modelos sin predict_proba."""
     try:
