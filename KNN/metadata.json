@@ -1,0 +1,25 @@
+{
+  "best_k": 20,
+  "cv_auc": 0.7279694514791403,
+  "test_auc": 0.7319240961384803,
+  "features": [
+    "age",
+    "gender",
+    "height",
+    "weight",
+    "ap_hi",
+    "ap_lo",
+    "cholesterol",
+    "gluc",
+    "smoke",
+    "alco",
+    "active"
+  ],
+  "target_name": "cardio",
+  "class_labels": [
+    "No cardio",
+    "Cardio"
+  ],
+  "random_state": 66,
+  "test_size": 0.2
+}
