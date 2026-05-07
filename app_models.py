@@ -18,7 +18,24 @@ from sklearn.metrics import (
 )
 import lime
 import lime.lime_tabular
-import traceback
+
+# ══════════════════════════════════════════════
+# BASE_DIR — debe definirse primero para que todo lo demás pueda usarlo
+# ══════════════════════════════════════════════
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
+# Diagnóstico visible en logs de Render
+print(f"[STARTUP] BASE_DIR: {BASE_DIR}")
+print("[STARTUP] Estructura de archivos:")
+for root, dirs, files in os.walk(BASE_DIR):
+    dirs[:] = [d for d in dirs if d not in ('__pycache__', '.git', 'venv', 'env', 'node_modules')]
+    level = root.replace(BASE_DIR, '').count(os.sep)
+    indent = '  ' * level
+    print(f"[STARTUP] {indent}{os.path.basename(root) or 'ROOT'}/")
+    for f in files:
+        fpath = os.path.join(root, f)
+        size = os.path.getsize(fpath)
+        print(f"[STARTUP] {indent}  {f}  ({size:,} bytes)")
 
 # ══════════════════════════════════════════════
 # APP
@@ -29,7 +46,7 @@ server = app.server
 # ══════════════════════════════════════════════
 # DATOS
 # ══════════════════════════════════════════════
-df_raw = pd.read_csv("HeartFailureDataset.csv")
+df_raw = pd.read_csv(os.path.join(BASE_DIR, "HeartFailureDataset.csv"))
 df_raw = df_raw.drop(columns=['id'])
 
 X = df_raw.iloc[:, :-1]
@@ -49,40 +66,14 @@ CONT_COLS = [c for c in NUM_COLS if c not in CAT_COLS]
 # ══════════════════════════════════════════════
 # MODELOS
 # ══════════════════════════════════════════════
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 MODEL_PATHS = {
-    "Naive Bayes": os.path.join(BASE_DIR, "bayesian", "naive_bayes_gridsearch.pkl"),
-
-    "Gradient Boosting": os.path.join(
-        BASE_DIR,
-        "Gradient_Boosting",
-        "gradient_boosting_gridsearch.pkl"
-    ),
-
-    "KNN": os.path.join(
-        BASE_DIR,
-        "KNN",
-        "knn_cardio_pipeline.pkl"
-    ),
-
-    "Logistic Regression": os.path.join(
-        BASE_DIR,
-        "Logistic_Regression",
-        "logistic_regression.pkl"
-    ),
-
-    "SVM": os.path.join(
-        BASE_DIR,
-        "SVM",
-        "svm_gridsearch.pkl"
-    ),
-
-    "Random Forest": os.path.join(
-        BASE_DIR,
-        "Random_Forest",
-        "random_forest_gridsearch.pkl"
-    ),
+    "Naive Bayes":          os.path.join(BASE_DIR, "bayesian",            "naive_bayes_gridsearch.pkl"),
+    "Gradient Boosting":    os.path.join(BASE_DIR, "Gradient_Boosting",   "gradient_boosting_gridsearch.pkl"),
+    "KNN":                  os.path.join(BASE_DIR, "KNN",                 "knn_cardio_pipeline.pkl"),
+    "Logistic Regression":  os.path.join(BASE_DIR, "Logistic_Regression", "logistic_regression.pkl"),
+    "SVM":                  os.path.join(BASE_DIR, "SVM",                 "svm_gridsearch.pkl"),
+    "Random Forest":        os.path.join(BASE_DIR, "Random_Forest",       "random_forest_gridsearch.pkl"),
 }
 # Caché de feature importance por modelo (se calcula una vez y se reutiliza)
 FEAT_CACHE = {}
@@ -96,42 +87,44 @@ MODEL_COLORS = {
     "Random Forest":       "#1A3A5C",
 }
 
-
-
 def load_model(name):
+    # Intentar la ruta principal; si no existe, probar alternativas conocidas
+    candidates = [MODEL_PATHS[name]]
+    if name == "KNN":
+        candidates.append(os.path.join(BASE_DIR, "KNN", "knn_cardio_model.pkl"))
 
-    path = MODEL_PATHS[name]
+    path = None
+    for candidate in candidates:
+        if os.path.exists(candidate):
+            path = candidate
+            break
 
-    print(f"\nLoading model: {name}")
-    print(f"Path: {path}")
-    print(f"Exists: {os.path.exists(path)}")
-
-    if not os.path.exists(path):
-        print("Model file not found")
+    if path is None:
+        print(f"[load_model] NO ENCONTRADO: {name}")
+        print(f"[load_model] Intentados: {candidates}")
+        # Imprimir árbol completo para diagnóstico en Render
+        for root, dirs, files in os.walk(BASE_DIR):
+            level = root.replace(BASE_DIR, '').count(os.sep)
+            indent = '  ' * level
+            print(f"[load_model] {indent}{os.path.basename(root)}/")
+            for f in files:
+                print(f"[load_model] {indent}  {f}")
         return None
 
     try:
         model = joblib.load(path)
-        print("Loaded with joblib")
+        print(f"[load_model] OK (joblib): {path}")
         return model
-
-    except Exception:
-        print("Joblib load failed:")
-        traceback.print_exc()
-
+    except Exception as e1:
         try:
             with open(path, "rb") as f:
                 model = pickle.load(f)
-
-            print("Loaded with pickle")
+            print(f"[load_model] OK (pickle): {path}")
             return model
-
-        except Exception:
-            print("Pickle load failed:")
-            traceback.print_exc()
-
+        except Exception as e2:
+            print(f"[load_model] ERROR cargando {path}: joblib={e1} | pickle={e2}")
             return None
-            
+
 def get_proba(model, X):
     """Obtener probabilidades compatible con pipelines y modelos sin predict_proba."""
     try:
