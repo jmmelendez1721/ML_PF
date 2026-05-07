@@ -50,11 +50,11 @@ CONT_COLS = [c for c in NUM_COLS if c not in CAT_COLS]
 # ══════════════════════════════════════════════
 MODEL_PATHS = {
     "Naive Bayes":          "bayesian/naive_bayes_gridsearch.pkl",
-    "Gradient Boosting":    "Gradient Boosting/gradient_boosting_gridsearch.pkl",
+    "Gradient Boosting":    "Gradient_Boosting/gradient_boosting_gridsearch.pkl",
     "KNN":                  "KNN/knn_cardio_pipeline.pkl",
-    "Logistic Regression":  "Logistic Regression/logistic_regression.pkl",
+    "Logistic Regression":  "Logistic_Regression/logistic_regression.pkl",
     "SVM":                  "SVM/svm_gridsearch.pkl",
-    "Random Forest":        "Random Forest/random_forest_gridsearch.pkl",
+    "Random Forest":        "Random_Forest/random_forest_gridsearch.pkl",
 }
 # Caché de feature importance por modelo (se calcula una vez y se reutiliza)
 FEAT_CACHE = {}
