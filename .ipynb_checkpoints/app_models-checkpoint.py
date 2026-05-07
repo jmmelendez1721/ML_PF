@@ -49,12 +49,12 @@ CONT_COLS = [c for c in NUM_COLS if c not in CAT_COLS]
 # MODELOS
 # ══════════════════════════════════════════════
 MODEL_PATHS = {
-    "Naive Bayes":          "bayesian/naive_bayes_gridsearch.pkl",
-    "Gradient Boosting":    "Gradient_Boosting/gradient_boosting_gridsearch.pkl",
-    "KNN":                  "KNN/knn_cardio_pipeline.pkl",
-    "Logistic Regression":  "Logistic_Regression/logistic_regression.pkl",
-    "SVM":                  "SVM/svm_gridsearch.pkl",
-    "Random Forest":        "Random_Forest/random_forest_gridsearch.pkl",
+    "Naive Bayes":"https://github.com/jmmelendez1721/ML_PF/blob/master/bayesian/naive_bayes_gridsearch.pkl",
+    "Gradient Boosting": "https://github.com/jmmelendez1721/ML_PF/blob/master/Gradient_Boosting/gradient_boosting_gridsearch.pkl",
+    "KNN": "https://github.com/jmmelendez1721/ML_PF/blob/master/KNN/knn_cardio_pipeline.pkl",
+    "Logistic Regression": "https://github.com/jmmelendez1721/ML_PF/blob/master/Logistic_Regression/logistic_regression.pkl",
+    "SVM": "https://github.com/jmmelendez1721/ML_PF/blob/master/SVM/svm_gridsearch.pkl",
+    "Random Forest": "https://github.com/jmmelendez1721/ML_PF/blob/master/Random_Forest/random_forest_gridsearch.pkl",
 }
 # Caché de feature importance por modelo (se calcula una vez y se reutiliza)
 FEAT_CACHE = {}
