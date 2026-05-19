@@ -1224,6 +1224,8 @@ def render_models(selected_models):
         # Columnas numéricas del CR (todo excepto "Clase")
         num_cr_cols = [c for c in df_cr.columns if c != class_col]
 
+        df_cr[num_cr_cols] = df_cr[num_cr_cols].astype(object)
+
         # Round a 4 decimales en columnas numéricas
         for col in num_cr_cols:
             df_cr[col] = pd.to_numeric(df_cr[col], errors="coerce").round(4)
