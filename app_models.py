@@ -90,7 +90,7 @@ EDA_CAT_COLS = [
 # No se carga ningún .pkl ni se hace inferencia
 # ══════════════════════════════════════════════
 MODEL_FOLDERS = {
-    "Naive Bayes":         "bayesian",
+    "Naive Bayes":         "Bayesian",
     "Gradient Boosting":   "Gradient_Boosting",
     "KNN":                 "KNN",
     "Logistic Regression": "Logistic_Regression",
