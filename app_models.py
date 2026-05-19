@@ -126,13 +126,13 @@ def read_csv_safe(path):
         return None
 
 def load_metrics(name):
-    return read_csv_safe(model_path(name, "Metrics.csv"))
+    return read_csv_safe(model_path(name, "metrics.csv"))
 
 def load_roc(name):
     return read_csv_safe(model_path(name, "roc_curve.csv"))
 
 def load_cr(name):
-    return read_csv_safe(model_path(name, "Classification_report.csv"))
+    return read_csv_safe(model_path(name, "classification_report.csv"))
 
 def load_lime(name):
     return read_csv_safe(model_path(name, "lime", "lime_explanations.csv"))
