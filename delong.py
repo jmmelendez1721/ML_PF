@@ -54,20 +54,27 @@ def fast_delong(predictions_sorted_transposed, label_1_count):
 
 
 def calc_pvalue(aucs, sigma):
-    import numpy as np
-    from scipy import stats
+    aucs = np.asarray(aucs).reshape(-1)
+
+    # validar tamaño mínimo
+    if aucs.size < 2:
+        return 1.0  # no hay comparación válida
 
     l = np.array([[1, -1]])
 
-    diff = aucs[0] - aucs[1]
+    denom = np.dot(np.dot(l, sigma), l.T)
 
-    var = np.dot(np.dot(l, sigma), l.T)
+    # evitar división por cero o negativos numéricos
+    denom = np.asarray(denom).squeeze()
+    denom = np.maximum(denom, 1e-12)
 
-    z = np.abs(diff) / np.sqrt(var)
+    z = np.abs(np.diff(aucs)) / np.sqrt(denom)
 
     pvalue = 2 * (1 - stats.norm.cdf(z))
 
-    return float(pvalue)
+    pvalue = np.asarray(pvalue).reshape(-1)
+
+    return float(pvalue[0])
 
 
 
