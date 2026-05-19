@@ -1404,10 +1404,13 @@ def render_models(selected_models):
         # Corrección Bonferroni
         # ─────────────────────────────────────
 
-        corrected = multipletests(
-            raw_pvalues,
-            method='bonferroni'
-        )[1]
+        
+        raw_pvalues = np.array(raw_pvalues, dtype=float)
+        
+        if raw_pvalues.size == 0:
+            corrected = np.array([])
+        else:
+            corrected = multipletests(raw_pvalues, method="bonferroni")[1]]
 
         for i in range(len(results)):
             results[i]["p_corrected"] = corrected[i]
