@@ -1240,6 +1240,7 @@ def render_models(selected_models):
             support_col = num_cr_cols[-1]    # última    → support
             blank_cols  = num_cr_cols[:-2]   # todas las anteriores → "--"
             for col in blank_cols:
+                df_cr[col] = df_cr[col].astype("object")
                 df_cr.loc[acc_mask, col] = "--"
 
         cr_cond = [
