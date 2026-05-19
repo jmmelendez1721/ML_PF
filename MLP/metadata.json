@@ -1,0 +1,7 @@
+{
+    "model_name": "MLP",
+    "scoring_metric": "roc_auc",
+    "train_samples": 48043,
+    "test_samples": 13727,
+    "num_features": 8
+}

@@ -1,6 +1,5 @@
 {
-    "model_name": "KNN",
-    "best_k": 20,
+    "model_name": "Bayesian",
     "cv_folds": 5,
     "scoring_metric": "roc_auc",
     "train_samples": 56000,

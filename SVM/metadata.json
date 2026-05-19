@@ -1,7 +1,6 @@
 {
-    "model_name": "KNN",
-    "best_k": 20,
-    "cv_folds": 5,
+    "model_name": "SVM",
+    "cv_folds": 3,
     "scoring_metric": "roc_auc",
     "train_samples": 56000,
     "test_samples": 14000,
